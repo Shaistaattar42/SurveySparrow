@@ -1,0 +1,26 @@
+[
+  {
+    "title": "Team Meeting",
+    "date": "2025-11-10",
+    "time": "10:00 AM",
+    "duration": "1h"
+  },
+  {
+    "title": "Client Presentation",
+    "date": "2025-11-10",
+    "time": "11:30 AM",
+    "duration": "30m"
+  },
+  {
+    "title": "Hackathon",
+    "date": "2025-11-14",
+    "time": "9:00 AM",
+    "duration": "6h"
+  },
+  {
+    "title": "Code Review",
+    "date": "2025-11-14",
+    "time": "3:00 PM",
+    "duration": "2h"
+  }
+]

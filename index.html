@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calendar App</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="calendar-container">
+    <div class="calendar-header">
+      <button id="prev">&#10094;</button>
+      <h2 id="month-year"></h2>
+      <button id="next">&#10095;</button>
+    </div>
+    <div class="calendar-weekdays">
+      <div>Sun</div>
+      <div>Mon</div>
+      <div>Tue</div>
+      <div>Wed</div>
+      <div>Thu</div>
+      <div>Fri</div>
+      <div>Sat</div>
+    </div>
+    <div id="calendar-days" class="calendar-days"></div>
+  </div>
+
+  <script>
+    const monthYear = document.getElementById("month-year");
+    const daysContainer = document.getElementById("calendar-days");
+    const prevBtn = document.getElementById("prev");
+    const nextBtn = document.getElementById("next");
+
+    let date = new Date();
+    let events = [];
+
+    async function loadEvents() {
+      const res = await fetch("events.json");
+      events = await res.json();
+      renderCalendar();
+    }
+
+    function renderCalendar() {
+      const year = date.getFullYear();
+      const month = date.getMonth();
+      const today = new Date();
+
+      monthYear.textContent = date.toLocaleString("default", {
+        month: "long",
+        year: "numeric",
+      });
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const lastDate = new Date(year, month + 1, 0).getDate();
+
+      daysContainer.innerHTML = "";
+
+      // Empty cells before month starts
+      for (let i = 0; i < firstDay; i++) {
+        const empty = document.createElement("div");
+        empty.classList.add("empty");
+        daysContainer.appendChild(empty);
+      }
+
+      // Actual days
+      for (let day = 1; day <= lastDate; day++) {
+        const cell = document.createElement("div");
+        const cellDate = new Date(year, month, day);
+        const dateStr = cellDate.toISOString().split("T")[0];
+
+        cell.classList.add("day");
+        if (
+          today.getFullYear() === year &&
+          today.getMonth() === month &&
+          today.getDate() === day
+        ) {
+          cell.classList.add("today");
+        }
+
+        const dayNum = document.createElement("div");
+        dayNum.classList.add("date-num");
+        dayNum.textContent = day;
+        cell.appendChild(dayNum);
+
+        // Add events for this date
+        const dayEvents = events.filter((e) => e.date === dateStr);
+        if (dayEvents.length > 0) {
+          dayEvents.forEach((ev, idx) => {
+            const eventEl = document.createElement("div");
+            eventEl.classList.add("event");
+            eventEl.style.background =
+              idx % 2 === 0 ? "#93c5fd" : "#a7f3d0"; // alternate colors
+            eventEl.textContent = `${ev.title} (${ev.time})`;
+            cell.appendChild(eventEl);
+          });
+        }
+
+        daysContainer.appendChild(cell);
+      }
+    }
+
+    prevBtn.addEventListener("click", () => {
+      date.setMonth(date.getMonth() - 1);
+      renderCalendar();
+    });
+
+    nextBtn.addEventListener("click", () => {
+      date.setMonth(date.getMonth() + 1);
+      renderCalendar();
+    });
+
+    loadEvents();
+  </script>
+</body>
+</html>
